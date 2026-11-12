@@ -1,0 +1,7 @@
+top: aes_cipher_top
+rtl_files:
+  - ../RTL/aes_sbox.v
+  - ../RTL/aes_rcon.v
+  - ../RTL/aes_key_expand_128.v
+  - ../RTL/aes_cipher_top.v
+sdc: ../SDC/constraint.sdc
