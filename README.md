@@ -13,7 +13,7 @@ A new design needs only a YAML config; flow scripts contain no design-specific c
 
 ## Flow
 
-<p align="center"><img src="docs/flow.svg" alt="BackFlow flow" width="760"></p>
+<p align="center"><img src="docs/flow.svg" alt="Flow: Lint, Synthesis, LEC, STA" width="760"></p>
 
 `python runner.py <design>` reads `design.yaml`, runs the four stages in order, and writes
 `results/summary_<design>.csv` (one row of metrics) and `results/violators_<design>.csv`
