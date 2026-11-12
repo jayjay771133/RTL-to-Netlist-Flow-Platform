@@ -1,0 +1,5 @@
+designs/*/RUN/
+designs/*/LOG/
+designs/*/OUT/
+designs/*/RPT/
+designs/*/CFG/design_cfg.*

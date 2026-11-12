@@ -1,0 +1,5 @@
+top: gcd
+rtl_files:
+  - ../RTL/gcd.v
+sdc: ../SDC/constraint.sdc
+
