@@ -54,4 +54,4 @@ report_tns -digits 3 >> ../RPT/sta_summary.rpt
 # 4. 위반 경로 목록   (PT: report_timing -max_paths N -nworst 1 -slack_lesser_than 0)
 #    위반 경로만 Startpoint / Endpoint / Slack 한 줄씩 → Python 이 CSV 로 정리
 # =====================================================================
-report_checks -path_delay max -group_path_count 1000 -endpoint_path_count 1 -slack_max 0 -format summary -digit 3 > ../RPT/sta_violators.rpt
+report_checks -path_delay max -group_path_count 1000 -endpoint_path_count 1 -slack_max 0 -format summary -digits 3 > ../RPT/sta_violators.rpt
