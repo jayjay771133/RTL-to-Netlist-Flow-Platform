@@ -1,8 +1,8 @@
-# BackFlow
+# RTL-to-Netlist Flow Platform
 
-**Front-end implementation flow automation — Lint → Synthesis → LEC → STA**
+**Config-driven Lint → Synthesis → LEC → STA with automated judgement and timing violation analysis**
 
-Open-source EDA flow structured after commercial tools (SpyGlass / DC / Formality / PrimeTime).
+Built with Verilator, Yosys, and OpenSTA on the Nangate45 library.
 A new design needs only a YAML config; flow scripts contain no design-specific code.
 
 - **One command per design** — runs all stages, judges each result, stops on failure
