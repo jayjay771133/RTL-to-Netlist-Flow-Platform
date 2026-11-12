@@ -3,9 +3,12 @@ import sys
 import yaml
 import subprocess
 
-# =====================================================================
-# 0. 디자인 / 폴더 정하기
-# =====================================================================
+
+# RUN / LOG / OUT / RPT 폴더가 없으면 만들기 (Git 에서 제외된 폴더라 새로 받으면 없음)
+os.makedirs(d + "/RUN", exist_ok=True)
+os.makedirs(d + "/LOG", exist_ok=True)
+os.makedirs(d + "/OUT", exist_ok=True)
+os.makedirs(d + "/RPT", exist_ok=True)
 
 design = sys.argv[1]
 d = "designs/" + design
