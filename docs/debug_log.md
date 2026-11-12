@@ -18,7 +18,7 @@ Each entry maps to the equivalent concept in commercial tools where relevant.
 ### 2. Lint stops with `BADVLTPRAGMA` errors on gcd
 - **Cause**: The RTL is generator-produced (PyMTL) and contains `// verilator ...` comments,
   which Verilator parses as tool pragmas.
-- **Fix**: Waived the pragma check; reviewed remaining 17 warnings by type.
+- **Fix**: Removed the generator comments from the local RTL copy; reviewed the remaining 17 warnings by type.
 
 ### 3. `LATCH` warnings (2) in the controller
 - **Check**: Cross-checked with synthesis — no latch cells in the netlist (DFF only).
@@ -33,25 +33,31 @@ Each entry maps to the equivalent concept in commercial tools where relevant.
 - **Fix**: `read_liberty -lib` before synthesis.
 - **Equivalent**: `link_library` setup in DC.
 
-### 5. Buffer explosion (413 BUF_X1, area 2x) after `insbuf`
+### 5. Buffer explosion after `insbuf` (413 `BUF_X1`, area 465.8 → 795.3)
 - **Cause**: Buffer insertion while preserving names created a buffer per named wire.
 - **Fix**: Removed `insbuf` — buffering and tie cells belong to P&R, not front-end synthesis.
+
+### 6. Violator report unreadable on aes (`_2522_/Q -> _2543_/D`)
+- **Cause**: Registers in the top module got auto-numbered cell names after technology mapping.
+- **Fix**: `autoname` after synthesis — cell names derived from connected RTL nets (e.g. `sa32_DFF_X1_Q_7`).
+- **Note**: The numeric suffix is a uniqueness counter, not the bit index.
+- **Check**: LEC still PASS; `git diff results/summary_*.csv` shows no metric change.
 
 ---
 
 ## LEC
 
-### 6. LEC fails 51/51 compare points (eqy)
+### 7. LEC fails 51/51 compare points (eqy)
 - **Cause**: Synthesis re-encoded the FSM (binary → one-hot), so state registers no longer match RTL.
 - **Fix**: `synth -nofsm`.
 - **Equivalent**: Formality needs SVF guidance for FSM re-encoding.
 
-### 7. LEC fails on register outputs after cleanup
+### 8. LEC fails on register outputs after cleanup
 - **Cause**: `opt_clean -purge` removed register output net names → compare points could not be matched.
 - **Fix**: Use `opt_clean` without `-purge`.
 - **Equivalent**: Name-based compare point matching in Formality.
 
-### 8. False mismatches on registers without reset (eqy: 107/658 failing)
+### 9. False mismatches on registers without reset (eqy: 107/658 failing)
 - **Cause**: eqy's SAT check unrolls from an initial state; reset-less data registers
   (gcd `a_reg`, `b_reg`) start unknown, producing false inequivalence.
 - **Fix**: Switched to Yosys `equiv_*` flow — match by name, combinational proof,
@@ -63,43 +69,43 @@ Each entry maps to the equivalent concept in commercial tools where relevant.
 
 ## Platform generalization (adding aes)
 
-### 9. aes lint fails: `Cannot find include file: 'timescale.v'`
+### 10. aes lint fails: `Cannot find include file: 'timescale.v'`
 - **Cause**: RTL uses `` `include "timescale.v" ``; tools search includes relative to the run directory.
   gcd has no includes, so this was not visible.
 - **Fix**: Added `-I../RTL` to lint / synthesis / LEC RTL reads.
 - **Equivalent**: `+incdir+` (VCS), `search_path` (DC).
-- **Regression**: Re-ran gcd after the change.
 
-### 10. gcd synthesis broke after fix #9: `No filename given`
+### 11. gcd synthesis broke after fix #10: `No filename given`
 - **Cause**: Typo `read_verilog -I $f` — the RTL file was consumed as the include directory argument.
 - **Fix**: `read_verilog -I../RTL $f`.
 - **Found by**: Regression run on gcd.
 
-### 11. aes LEC aborts: `No SAT model available for cell ... ($mem_v2)`
+### 12. aes LEC aborts: `No SAT model available for cell ... ($mem_v2)`
 - **Cause**: When reading RTL for LEC, Yosys converted the `aes_rcon` constant `case` table into a
   ROM (memory cell). The SAT engine has no model for memory cells.
   The netlist side was fine — synthesis already maps memories to logic.
 - **Fix**: `memory_map` on the reference (RTL) side before comparison.
 
-### 12. LEC compare point count dropped from 868 to 90
+### 13. LEC compare point count dropped from 868 to 90
 - **Check**: Per-stage reports (`lec_after_make` / `lec_after_struct`).
 - **Result**: 868 compare points matched; 778 merged by structural comparison (`equiv_struct`),
   remaining 90 proven by SAT / induction. Not a loss of coverage.
 
 ---
 
-## Verification of the judgement logic
+## Error Injection
 
-### 13. Error injection
-| Test | Injection | Result |
-|------|-----------|--------|
-| Lint | Syntax error appended to gcd RTL | `[lint] FAIL`, flow stopped |
-| LEC | One `NAND2_X1` swapped to `NOR2_X1` in netlist | 20 unproven, located at `a_reg` input cone |
+### 14. Judgement logic checked with intentional errors
+
+| Test | Injection                                      | Result                                     |
+|:-----|:-----------------------------------------------|:-------------------------------------------|
+| Lint | Syntax error appended to gcd RTL               | `[lint] FAIL`, flow stopped                |
+| LEC  | One `NAND2_X1` swapped to `NOR2_X1` in netlist | 20 unproven, located at `a_reg` input cone |
 
 ---
 
 ## Git
 
-### 14. Generated config files committed by mistake
+### 15. Generated config files committed by mistake
 - **Cause**: `.gitignore` pattern had a space (`design_cfg. *`).
 - **Fix**: Corrected pattern, `git rm --cached`, amended the commit.
