@@ -4,15 +4,17 @@ import yaml
 import subprocess
 
 
+
+design = sys.argv[1]
+d = "designs/" + design
+run_dir = d + "/RUN"
+
 # RUN / LOG / OUT / RPT 폴더가 없으면 만들기 (Git 에서 제외된 폴더라 새로 받으면 없음)
 os.makedirs(d + "/RUN", exist_ok=True)
 os.makedirs(d + "/LOG", exist_ok=True)
 os.makedirs(d + "/OUT", exist_ok=True)
 os.makedirs(d + "/RPT", exist_ok=True)
 
-design = sys.argv[1]
-d = "designs/" + design
-run_dir = d + "/RUN"
 
 # =====================================================================
 # 1. 설정 파일 생성 : design.yaml → design_cfg.tcl / design_cfg.sh
