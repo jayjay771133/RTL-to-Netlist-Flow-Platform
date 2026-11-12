@@ -338,6 +338,23 @@ f.close()
 print("[csv] saved :", csv_path)
 
 
+
+# 6-2. 위반 경로 목록 : results/violators_<design>.csv
+#      viol 의 한 줄 = [종류, 출발, 도착, slack]
+viol_path = "results/violators_" + design + ".csv"
+f = open(viol_path, "w")
+f.write("type,startpoint,endpoint,slack\n")
+
+for v in viol:
+    kind = v[0]
+    start = v[1]
+    end = v[2]
+    slack = v[3]
+    f.write(kind + "," + start + "," + end + "," + str(slack) + "\n")
+
+f.close()
+print("[csv] saved :", viol_path)
+
 # =====================================================================
 # 7. 끝
 # =====================================================================

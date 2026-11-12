@@ -26,6 +26,8 @@ abc -liberty $lib
 
 # 4. 정리  (-purge 미사용: 레지스터 이름 보존 → LEC 매칭)
 opt_clean
+# 자동 번호 셀 이름(_2522_)을 연결된 RTL 신호 이름 기반으로 변경
+autoname
 
 # 5. 리포트  (DC: report_area / check_design)
 tee -o ../RPT/syn_area.rpt  stat -liberty $lib -top $TOP
