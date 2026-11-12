@@ -16,7 +16,8 @@ A new design needs only a YAML config; flow scripts contain no design-specific c
 <p align="center"><img src="docs/flow.svg" alt="BackFlow flow" width="760"></p>
 
 `python runner.py <design>` reads `design.yaml`, runs the four stages in order, and writes
-`results/summary_<design>.csv` — one row per design with the metrics below.
+`results/summary_<design>.csv` (one row of metrics) and `results/violators_<design>.csv`
+(every violating path: type, startpoint, endpoint, slack).
 
 | Stage     | Stop on                  | Record                            |
 |:----------|:-------------------------|:----------------------------------|
@@ -46,9 +47,20 @@ From [`results/summary_gcd.csv`](results/summary_gcd.csv) and [`results/summary_
 | gcd    |         51 |  34 |   0 |  17 |   0 |
 | aes    |        368 | 368 |   0 |   0 |   0 |
 
-- **gcd** — violations in the subtractor datapath (r2r) and output paths (r2o)
-- **aes** — all violations are register-to-register (round logic depth); IO paths are constrained and met
+**Worst setup path**
+
+| Design | From          | To            | Slack (ns) | Logic between                     |
+|:-------|:--------------|:--------------|-----------:|:----------------------------------|
+| gcd    | `dpath.b_reg` | `dpath.a_reg` |     -0.571 | 16-bit subtractor -> mux          |
+| aes    | `sa32`        | `sa23`        |     -0.326 | One AES round (S-box, MixColumns) |
+
+- **gcd** — 51 of 52 endpoints violate at 0.25 ns; output slack worsens with bit position
+  (`resp_msg[1]` -0.044 → `resp_msg[15]` -0.487), following the subtractor borrow chain
+- **aes** — all violations are register-to-register between state bytes (`sa00`–`sa33`);
+  IO paths are constrained and met (`check_setup` reports no unconstrained endpoints)
 - Clock targets are aggressive benchmark values; STA is pre-layout (see Limitations)
+
+Per-path lists: [`violators_gcd.csv`](results/violators_gcd.csv), [`violators_aes.csv`](results/violators_aes.csv)
 
 ---
 
@@ -60,17 +72,20 @@ Errors were intentionally injected to confirm that each check fails when it shou
 |:-----------|:---------------------------------------|:-----------------------------------|
 | Lint       | Syntax error in RTL                    | `FAIL`, synthesis not started      |
 | LEC        | One `NAND2_X1` -> `NOR2_X1` in netlist | 20 unproven at `a_reg` input cone  |
-| Regression | aes script changes re-run on gcd       | Caught an argument typo before aes |
+| Regression | gcd re-run after aes script changes    | Caught `read_verilog -I` typo      |
 
 ---
 
 ## Usage
 
 ```bash
-source env.sh             # tool paths and Python venv (see env.sh.example)
+cp env.sh.example env.sh  # edit tool and library paths for your machine
+source env.sh
 python runner.py gcd
 python runner.py aes
 ```
+
+Run from the repository root.
 
 **Adding a design** — put RTL and SDC under `designs/<name>/`, write `CFG/design.yaml`, run `python runner.py <name>`.
 
