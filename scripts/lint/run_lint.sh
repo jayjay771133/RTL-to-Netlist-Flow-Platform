@@ -20,4 +20,4 @@ source ../CFG/design_cfg.sh
 #                          일반 출력(1)과 합쳐서 함께 넘김
 #   | tee ../LOG/lint.log: 화면에도 보여주고 로그 파일에도 저장
 
-verilator --lint-only -Wall -Wno-fatal --top-module "$TOP" $RTL_FILES 2>&1 | tee ../LOG/lint.log
+verilator --lint-only -Wall -Wno-fatal -I../RTL --top-module "$TOP" $RTL_FILES 2>&1 | tee ../LOG/lint.log

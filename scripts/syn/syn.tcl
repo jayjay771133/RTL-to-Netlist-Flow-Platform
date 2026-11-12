@@ -13,7 +13,7 @@ source ../CFG/design_cfg.tcl
 
 # 1. 라이브러리 + RTL 읽기  (DC: link_library / analyze + elaborate)
 read_liberty -lib $lib
-foreach f $RTL_FILES { read_verilog $f }
+foreach f $RTL_FILES { read_verilog -I../RTL $f }
 
 # 2. 합성  (DC: compile 앞부분)
 #    -nofsm : FSM 재인코딩 금지 (LEC 매칭 유지)
