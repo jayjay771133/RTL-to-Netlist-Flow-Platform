@@ -1,4 +1,5 @@
 # =====================================================================
 # lib_setup.tcl : 라이브러리 설정 (모든 디자인 공통, DC setup 역할)
+#   lib 경로는 env.sh 의 BF_LIB_NANGATE45 환경변수에서 가져옴
 # =====================================================================
-set lib /home/vboxuser/Desktop/backflow/tools/OpenROAD-flow-scripts/flow/platforms/nangate45/lib/NangateOpenCellLibrary_typical.lib
+set lib $env(BF_LIB_NANGATE45)

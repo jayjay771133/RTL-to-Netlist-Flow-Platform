@@ -3,3 +3,4 @@ designs/*/LOG/
 designs/*/OUT/
 designs/*/RPT/
 designs/*/CFG/design_cfg.*
+env.sh

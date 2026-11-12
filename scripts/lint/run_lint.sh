@@ -3,7 +3,6 @@
 # =====================================================================
 
 # EDA 환경
-source ~/Desktop/backflow/env.sh        
 
 # 디자인 설정 (TOP, RTL_FILES)
 source ../CFG/design_cfg.sh            
